@@ -1,7 +1,7 @@
-import { categories } from './categories'
-import { transactions } from './transactions'
-import { budgets } from './budgets'
-import { emailNotifications } from './email_notifications'
+import type { categories } from './categories'
+import type { transactions } from './transactions'
+import type { budgets } from './budgets'
+import type { emailNotifications } from './email_notifications'
 
 export * from './categories'
 export * from './transactions'

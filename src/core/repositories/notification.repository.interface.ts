@@ -7,7 +7,7 @@ export interface NotificationRecord {
   scheduledAt: Date
   sentAt: Date | null
   status: NotificationStatus
-  payload: Record<string, any>
+  payload: Record<string, unknown>
 }
 
 export interface INotificationRepository {
@@ -15,5 +15,5 @@ export interface INotificationRepository {
   wasAlreadySentToday(type: NotificationType, referenceId: string): Promise<boolean>
   markSent(id: string): Promise<void>
   markFailed(id: string): Promise<void>
-  create(type: NotificationType, payload: Record<string, any>, scheduledAt: Date): Promise<NotificationRecord>
+  create(type: NotificationType, payload: Record<string, unknown>, scheduledAt: Date): Promise<NotificationRecord>
 }
