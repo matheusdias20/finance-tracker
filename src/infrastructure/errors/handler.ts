@@ -5,8 +5,9 @@ import { AppError } from './index'
 export function handleApiError(error: unknown): NextResponse {
   if (error instanceof ZodError) {
     const details: Record<string, string[]> = {}
-    error.errors.forEach((e) => {
-      const key = e.path.join('.')
+    const zodError = error as ZodError;
+    zodError.issues.forEach((e) => {
+      const key = String(e.path.join('.'))
       details[key] = [...(details[key] ?? []), e.message]
     })
     return NextResponse.json(
