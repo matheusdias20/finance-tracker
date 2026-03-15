@@ -33,7 +33,7 @@ export async function GET() {
 
     const data = fs.readFileSync(settingsPath, 'utf-8')
     return NextResponse.json(JSON.parse(data))
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Erro ao ler configurações' }, { status: 500 })
   }
 }
