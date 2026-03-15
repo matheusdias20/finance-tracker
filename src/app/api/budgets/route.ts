@@ -4,6 +4,8 @@ import { budgetService } from '@/infrastructure/di/container'
 import { handleApiError, successResponse } from '@/infrastructure/errors/handler'
 import { createBudgetSchema } from '@/shared/schemas/budget.schema'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const month = request.nextUrl.searchParams.get('month')

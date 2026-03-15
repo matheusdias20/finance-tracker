@@ -8,6 +8,8 @@ interface Context {
   params: { id: string }
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(_request: Request, { params }: Context) {
   try {
     const transaction = await transactionService.findById(params.id)

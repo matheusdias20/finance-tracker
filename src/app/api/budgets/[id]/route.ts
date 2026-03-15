@@ -6,6 +6,8 @@ interface Context {
   params: { id: string }
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function PUT(request: Request, { params }: Context) {
   try {
     const body = await request.json()

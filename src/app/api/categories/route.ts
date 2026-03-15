@@ -3,6 +3,8 @@ import { handleApiError, successResponse } from '@/infrastructure/errors/handler
 import { createCategorySchema } from '@/shared/schemas/category.schema'
 import type { CreateCategoryInput } from '@/core/entities/category.entity'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     const categories = await categoryService.getAll()

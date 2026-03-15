@@ -4,6 +4,8 @@ import { handleApiError, successResponse } from '@/infrastructure/errors/handler
 import { createTransactionSchema, transactionFiltersSchema } from '@/shared/schemas/transaction.schema'
 import type { CreateTransactionInput, TransactionFilters } from '@/core/entities/transaction.entity'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   try {
     const searchParams = Object.fromEntries(request.nextUrl.searchParams.entries())
