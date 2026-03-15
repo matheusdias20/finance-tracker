@@ -130,6 +130,11 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
       const res = await repo.updateNextOccurrence('1', new Date())
       expect(res.id).toBe('1')
     })
+
+    it('lida com erro de banco', async () => {
+      mockDb.returning.mockRejectedValue(new Error('fail'))
+      await expect(repo.updateNextOccurrence('1', new Date())).rejects.toThrow(DatabaseError)
+    })
   })
 
   describe('softDelete', () => {
@@ -137,6 +142,11 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
       mockDb.where.mockResolvedValue(undefined)
       await repo.softDelete('1')
       expect(mockDb.update).toHaveBeenCalled()
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.softDelete('1')).rejects.toThrow(DatabaseError)
     })
   })
 
@@ -152,6 +162,11 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
       const res2 = await repo.sumByCategory('2024-12')
       expect(res2).toHaveLength(0)
     })
+
+    it('lida com erro de banco', async () => {
+      mockDb.groupBy.mockRejectedValue(new Error('fail'))
+      await expect(repo.sumByCategory('2024-12')).rejects.toThrow(DatabaseError)
+    })
   })
 
   describe('sumByMonth', () => {
@@ -162,6 +177,11 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
       const res = await repo.sumByMonth(6)
       expect(res[0].balance).toBe(500)
     })
+
+    it('lida com erro de banco', async () => {
+      mockDb.orderBy.mockRejectedValue(new Error('fail'))
+      await expect(repo.sumByMonth(6)).rejects.toThrow(DatabaseError)
+    })
   })
 
   describe('getHistoryByCategory', () => {
@@ -171,6 +191,11 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
       ])
       const res = await repo.getHistoryByCategory('c1', 6)
       expect(res[0].amount).toBe(500)
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.orderBy.mockRejectedValue(new Error('fail'))
+      await expect(repo.getHistoryByCategory('c1', 6)).rejects.toThrow(DatabaseError)
     })
   })
 
