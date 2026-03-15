@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { recurringService } from '@/infrastructure/di/container'
+import { recurringService, notificationService } from '@/infrastructure/di/container'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +11,7 @@ export async function POST(request: Request) {
   
   try {
     const result = await recurringService.processRecurring(new Date())
+    await notificationService.sendRecurringReminders()
     // eslint-disable-next-line no-console
     console.log(`[CRON] Processadas: ${result.processed}`, result.errors)
     

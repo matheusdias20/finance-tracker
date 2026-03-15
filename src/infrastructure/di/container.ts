@@ -8,6 +8,7 @@ import { TransactionService } from '@/core/services/transaction.service'
 import { BudgetService } from '@/core/services/budget.service'
 import { ForecastService } from '@/core/services/forecast.service'
 import { RecurringService } from '@/core/services/recurring.service'
+import { NotificationService } from '../notifications/notification.service'
 
 const categoryRepo = new CategoryRepository(db)
 const transactionRepo = new TransactionRepository(db)
@@ -19,3 +20,10 @@ export const budgetService = new BudgetService(budgetRepo)
 export const transactionService = new TransactionService(transactionRepo, budgetService)
 export const forecastService = new ForecastService(transactionRepo, categoryRepo)
 export const recurringService = new RecurringService(transactionRepo, transactionService)
+export const notificationService = new NotificationService(
+  notificationRepo,
+  transactionRepo,
+  budgetRepo,
+  process.env.RESEND_FROM_EMAIL ?? ''
+)
+

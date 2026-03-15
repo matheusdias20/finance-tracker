@@ -40,6 +40,8 @@ export interface UpdateTransactionInput {
 }
 
 export interface TransactionFilters {
+  startDate?: Date
+  endDate?: Date
   month?: string // formato YYYY-MM
   type?: TransactionType
   categoryId?: string
