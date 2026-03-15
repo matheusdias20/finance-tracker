@@ -1,7 +1,16 @@
 import { Resend } from 'resend'
 import type * as React from 'react'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const getResendApiKey = () => {
+  const key = process.env.RESEND_API_KEY
+  if (key && key.startsWith('re_')) {
+    return key
+  }
+  // Dummy key to prevent crash during next build (Collecting page data)
+  return 're_dummy_1234567890'
+}
+
+const resend = new Resend(getResendApiKey())
 
 interface SendEmailOptions {
   to: string
