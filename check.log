@@ -1,0 +1,8 @@
+
+> temp-app@0.1.0 type-check
+> tsc --noEmit
+
+src/app/api/reports/monthly-evolution/route.ts(13,20): error TS2339: Property 'income' does not exist on type 'MonthlyEvolution'.
+src/app/api/reports/monthly-evolution/route.ts(14,21): error TS2339: Property 'expense' does not exist on type 'MonthlyEvolution'.
+src/app/api/reports/monthly-evolution/route.ts(15,21): error TS2339: Property 'income' does not exist on type 'MonthlyEvolution'.
+src/app/api/reports/monthly-evolution/route.ts(15,35): error TS2339: Property 'expense' does not exist on type 'MonthlyEvolution'.

@@ -1,0 +1,5 @@
+﻿
+> temp-app@0.1.0 type-check
+> tsc --noEmit
+
+src/core/services/forecast.service.ts(11,22): error TS6133: 'monthsAhead' is declared but its value is never read.

@@ -1,0 +1,43 @@
+
+> temp-app@0.1.0 test
+> vitest run __tests__/integration/api/categories.test.ts
+
+
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90mE:/Downloads/finance-tracker[39m
+
+ [31m❯[39m __tests__/integration/api/categories.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 27[2mms[22m[39m
+     [32m✓[39m cria categoria com dados válidos → retorna 201[32m 9[2mms[22m[39m
+     [32m✓[39m rejeita cor no formato errado → retorna 400[32m 2[2mms[22m[39m
+     [32m✓[39m rejeita nome vazio → retorna 400[32m 2[2mms[22m[39m
+     [32m✓[39m deleta categoria sem transações → retorna 204[32m 1[2mms[22m[39m
+[31m     [31m×[31m rejeita deleção com transações vinculadas → retorna 409 com contagem[39m[32m 9[2mms[22m[39m
+     [32m✓[39m retorna 404 para categoria inexistente[32m 1[2mms[22m[39m
+     [32m✓[39m retorna lista de categorias ativas[32m 2[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/categories.test.ts[2m > [22mDELETE /api/categories/[id][2m > [22mrejeita deleção com transações vinculadas → retorna 409 com contagem
+[31m[1mAssertionError[22m: expected 400 to be 409 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 409[39m
+[31m+ 400[39m
+
+[36m [2m❯[22m __tests__/integration/api/categories.test.ts:[2m97:24[22m[39m
+    [90m 95|[39m     )
+    [90m 96|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m 97|[39m     [34mexpect[39m(res[33m.[39mstatus)[33m.[39m[34mtoBe[39m([34m409[39m)
+    [90m   |[39m                        [31m^[39m
+    [90m 98|[39m     [34mexpect[39m(json[33m.[39merror[33m.[39mmessage)[33m.[39m[34mtoContain[39m([32m'3'[39m)
+    [90m 99|[39m   })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (7)[39m
+[2m   Start at [22m 10:25:15
+[2m   Duration [22m 3.08s[2m (transform 123ms, setup 182ms, import 1.45s, tests 27ms, environment 1.19s)[22m
+

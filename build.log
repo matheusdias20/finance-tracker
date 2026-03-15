@@ -1,0 +1,34 @@
+﻿
+> temp-app@0.1.0 type-check
+> tsc --noEmit
+
+src/app/api/budgets/[id]/route.ts(1,1): error TS6133: 'NextResponse' is declared but its value is never read.
+src/app/api/categories/[id]/route.ts(10,27): error TS6133: 'request' is declared but its value is never read.
+src/app/api/categories/[id]/route.ts(23,69): error TS2379: Argument of type '{ name?: string | undefined; icon?: string | undefined; color?: string | undefined; budgetLimit?: number | null | undefined; type?: "income" | "expense" | undefined; }' is not assignable to parameter of type 'UpdateCategoryInput' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'name' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/app/api/categories/[id]/route.ts(30,30): error TS6133: 'request' is declared but its value is never read.
+src/app/api/categories/route.ts(1,1): error TS6133: 'NextResponse' is declared but its value is never read.
+src/app/api/categories/route.ts(19,54): error TS2379: Argument of type '{ name: string; icon: string; color: string; type: "income" | "expense"; budgetLimit?: number | null | undefined; }' is not assignable to parameter of type 'CreateCategoryInput' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'budgetLimit' are incompatible.
+    Type 'number | null | undefined' is not assignable to type 'number | null'.
+      Type 'undefined' is not assignable to type 'number | null'.
+src/app/api/transactions/[id]/route.ts(10,27): error TS6133: 'request' is declared but its value is never read.
+src/app/api/transactions/[id]/route.ts(23,75): error TS2379: Argument of type '{ date?: Date | undefined; type?: "income" | "expense" | undefined; amount?: number | undefined; description?: string | undefined; categoryId?: string | undefined; }' is not assignable to parameter of type 'UpdateTransactionInput' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'amount' are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+src/app/api/transactions/[id]/route.ts(30,30): error TS6133: 'request' is declared but its value is never read.
+src/app/api/transactions/route.ts(1,10): error TS6133: 'NextResponse' is declared but its value is never read.
+src/app/api/transactions/route.ts(10,63): error TS2379: Argument of type '{ page: number; limit: number; month?: string | undefined; type?: "income" | "expense" | undefined; categoryId?: string | undefined; search?: string | undefined; }' is not assignable to parameter of type 'TransactionFilters' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'month' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+src/app/api/transactions/route.ts(21,60): error TS2379: Argument of type '{ amount: number; description: string; date: Date; type: "income" | "expense"; categoryId: string; isRecurring: boolean; recurrenceRule?: { frequency: "daily" | "weekly" | "monthly" | "yearly"; day?: number | undefined; } | null | undefined; }' is not assignable to parameter of type 'CreateTransactionInput' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'recurrenceRule' are incompatible.
+    Type '{ frequency: "daily" | "weekly" | "monthly" | "yearly"; day?: number | undefined; } | null | undefined' is not assignable to type 'RecurrenceRule | null'.
+      Type 'undefined' is not assignable to type 'RecurrenceRule | null'.
+src/infrastructure/di/container.ts(15,7): error TS6133: '_notificationRepo' is declared but its value is never read.
+src/infrastructure/di/container.ts(21,71): error TS2345: Argument of type 'BudgetService' is not assignable to parameter of type 'TransactionService'.
+  Type 'BudgetService' is missing the following properties from type 'TransactionService': transactionRepo, budgetService, findMany, findById, and 2 more.

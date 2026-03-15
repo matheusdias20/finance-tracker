@@ -1,0 +1,162 @@
+
+> temp-app@0.1.0 test
+> vitest run __tests__/integration/api/transactions.test.ts
+
+
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90mE:/Downloads/finance-tracker[39m
+
+[90mstderr[2m | __tests__/integration/api/transactions.test.ts[2m > [22m[2mGET /api/transactions[2m > [22m[2mretorna lista paginada com total e totalPages
+[22m[39m[Unhandled Error] TypeError: Cannot read properties of undefined (reading 'searchParams')
+    at GET (E:/Downloads/finance-tracker/src/app/api/transactions/route.ts:11:61)
+    at E:/Downloads/finance-tracker/__tests__/integration/api/transactions.test.ts:126:23
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:296:11
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1258:26
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1681:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1678:10[90m)[39m
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1660:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1627:10[90m)[39m
+
+[90mstderr[2m | __tests__/integration/api/transactions.test.ts[2m > [22m[2mGET /api/transactions[2m > [22m[2mfiltra por month=YYYY-MM retornando apenas transações do mês
+[22m[39m[Unhandled Error] TypeError: Cannot read properties of undefined (reading 'searchParams')
+    at GET (E:/Downloads/finance-tracker/src/app/api/transactions/route.ts:11:61)
+    at E:/Downloads/finance-tracker/__tests__/integration/api/transactions.test.ts:141:23
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:296:11
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1258:26
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1681:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1678:10[90m)[39m
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1660:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1627:10[90m)[39m
+
+[90mstderr[2m | __tests__/integration/api/transactions.test.ts[2m > [22m[2mGET /api/transactions[2m > [22m[2mfiltra por type=expense retornando apenas gastos
+[22m[39m[Unhandled Error] TypeError: Cannot read properties of undefined (reading 'searchParams')
+    at GET (E:/Downloads/finance-tracker/src/app/api/transactions/route.ts:11:61)
+    at E:/Downloads/finance-tracker/__tests__/integration/api/transactions.test.ts:153:23
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:296:11
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1258:26
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1681:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1678:10[90m)[39m
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1660:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1627:10[90m)[39m
+
+[90mstderr[2m | __tests__/integration/api/transactions.test.ts[2m > [22m[2mGET /api/transactions[2m > [22m[2mbusca por search retorna transações com descrição correspondente
+[22m[39m[Unhandled Error] TypeError: Cannot read properties of undefined (reading 'searchParams')
+    at GET (E:/Downloads/finance-tracker/src/app/api/transactions/route.ts:11:61)
+    at E:/Downloads/finance-tracker/__tests__/integration/api/transactions.test.ts:166:23
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:296:11
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1258:26
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1681:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1678:10[90m)[39m
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1660:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1627:10[90m)[39m
+
+[90mstderr[2m | __tests__/integration/api/transactions.test.ts[2m > [22m[2mGET /api/transactions[2m > [22m[2mpage=2 retorna o segundo bloco de resultados
+[22m[39m[Unhandled Error] TypeError: Cannot read properties of undefined (reading 'searchParams')
+    at GET (E:/Downloads/finance-tracker/src/app/api/transactions/route.ts:11:61)
+    at E:/Downloads/finance-tracker/__tests__/integration/api/transactions.test.ts:177:23
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:296:11
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1258:26
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1681:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1678:10[90m)[39m
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1660:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1627:10[90m)[39m
+
+ [31m❯[39m __tests__/integration/api/transactions.test.ts [2m([22m[2m13 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 77[2mms[22m[39m
+     [32m✓[39m cria transação com dados válidos → retorna 201 com id[32m 19[2mms[22m[39m
+     [32m✓[39m rejeita amount negativo → retorna 400 com details.amount[32m 3[2mms[22m[39m
+     [32m✓[39m rejeita description vazia → retorna 400 com details.description[32m 2[2mms[22m[39m
+     [32m✓[39m rejeita categoryId inválido (não-uuid) → retorna 400[32m 2[2mms[22m[39m
+     [32m✓[39m cria transação recorrente sem recurrenceRule → retorna 400[32m 4[2mms[22m[39m
+     [32m✓[39m cria transação recorrente com recurrenceRule válida → retorna 201[32m 3[2mms[22m[39m
+[31m     [31m×[31m retorna lista paginada com total e totalPages[39m[32m 15[2mms[22m[39m
+[31m     [31m×[31m filtra por month=YYYY-MM retornando apenas transações do mês[39m[32m 9[2mms[22m[39m
+[31m     [31m×[31m filtra por type=expense retornando apenas gastos[39m[32m 3[2mms[22m[39m
+[31m     [31m×[31m busca por search retorna transações com descrição correspondente[39m[32m 6[2mms[22m[39m
+[31m     [31m×[31m page=2 retorna o segundo bloco de resultados[39m[32m 4[2mms[22m[39m
+     [32m✓[39m soft delete: retorna 204 e transação não aparece em listagens[32m 2[2mms[22m[39m
+     [32m✓[39m id inexistente → retorna 404[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 5 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/transactions.test.ts[2m > [22mGET /api/transactions[2m > [22mretorna lista paginada com total e totalPages
+[31m[1mAssertionError[22m: expected 500 to be 200 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m __tests__/integration/api/transactions.test.ts:[2m128:24[22m[39m
+    [90m126|[39m     [35mconst[39m res [33m=[39m [35mawait[39m [34mlistTransactions[39m(req [35mas[39m any)
+    [90m127|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m128|[39m     [34mexpect[39m(res[33m.[39mstatus)[33m.[39m[34mtoBe[39m([34m200[39m)
+    [90m   |[39m                        [31m^[39m
+    [90m129|[39m     [34mexpect[39m(json[33m.[39mdata[33m.[39mdata)[33m.[39m[34mtoHaveLength[39m([34m2[39m)
+    [90m130|[39m     [34mexpect[39m(json[33m.[39mdata)[33m.[39m[34mtoHaveProperty[39m([32m'total'[39m[33m,[39m [34m2[39m)
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/transactions.test.ts[2m > [22mGET /api/transactions[2m > [22mfiltra por month=YYYY-MM retornando apenas transações do mês
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'data')[39m
+[36m [2m❯[22m __tests__/integration/api/transactions.test.ts:[2m143:22[22m[39m
+    [90m141|[39m     [35mconst[39m res [33m=[39m [35mawait[39m [34mlistTransactions[39m(req [35mas[39m any)
+    [90m142|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m143|[39m     [34mexpect[39m(json[33m.[39mdata[33m.[39mdata)[33m.[39m[34mtoHaveLength[39m([34m1[39m)
+    [90m   |[39m                      [31m^[39m
+    [90m144|[39m   })
+    [90m145|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/transactions.test.ts[2m > [22mGET /api/transactions[2m > [22mfiltra por type=expense retornando apenas gastos
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'data')[39m
+[36m [2m❯[22m __tests__/integration/api/transactions.test.ts:[2m155:22[22m[39m
+    [90m153|[39m     [35mconst[39m res [33m=[39m [35mawait[39m [34mlistTransactions[39m(req [35mas[39m any)
+    [90m154|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m155|[39m     [34mexpect[39m(json[33m.[39mdata[33m.[39mdata)[33m.[39m[34mtoHaveLength[39m([34m1[39m)
+    [90m   |[39m                      [31m^[39m
+    [90m156|[39m     [34mexpect[39m(json[33m.[39mdata[33m.[39mdata[[34m0[39m][33m.[39mtype)[33m.[39m[34mtoBe[39m([32m'expense'[39m)
+    [90m157|[39m   })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/transactions.test.ts[2m > [22mGET /api/transactions[2m > [22mbusca por search retorna transações com descrição correspondente
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'data')[39m
+[36m [2m❯[22m __tests__/integration/api/transactions.test.ts:[2m168:22[22m[39m
+    [90m166|[39m     [35mconst[39m res [33m=[39m [35mawait[39m [34mlistTransactions[39m(req [35mas[39m any)
+    [90m167|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m168|[39m     [34mexpect[39m(json[33m.[39mdata[33m.[39mdata)[33m.[39m[34mtoHaveLength[39m([34m1[39m)
+    [90m   |[39m                      [31m^[39m
+    [90m169|[39m     [34mexpect[39m(json[33m.[39mdata[33m.[39mdata[[34m0[39m][33m.[39mdescription)[33m.[39m[34mtoBe[39m([32m'Supermercado'[39m)
+    [90m170|[39m   })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/transactions.test.ts[2m > [22mGET /api/transactions[2m > [22mpage=2 retorna o segundo bloco de resultados
+[31m[1mTypeError[22m: Cannot read properties of undefined (reading 'data')[39m
+[36m [2m❯[22m __tests__/integration/api/transactions.test.ts:[2m179:22[22m[39m
+    [90m177|[39m     [35mconst[39m res [33m=[39m [35mawait[39m [34mlistTransactions[39m(req [35mas[39m any)
+    [90m178|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m179|[39m     expect(json.data.data).toHaveLength(2) // 5 items, page 2 of 3 = l…
+    [90m   |[39m                      [31m^[39m
+    [90m180|[39m   })
+    [90m181|[39m })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (13)[39m
+[2m   Start at [22m 10:20:27
+[2m   Duration [22m 6.51s[2m (transform 285ms, setup 371ms, import 2.96s, tests 77ms, environment 2.45s)[22m
+

@@ -16,7 +16,16 @@ export default defineConfig({
         branches: 80,
         statements: 80,
       },
-      include: ['src/core/services/**'],
+      include: [
+        'src/core/services/**/*.ts',
+        'src/infrastructure/database/repositories/**/*.ts',
+        'src/app/api/**/*.ts',
+      ],
+      exclude: [
+        'src/**/*.d.ts',
+        'src/infrastructure/database/schema/**',
+        'src/infrastructure/database/seed.ts',
+      ],
     },
   },
   resolve: {

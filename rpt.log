@@ -1,0 +1,56 @@
+
+> temp-app@0.1.0 test
+> vitest run __tests__/integration/api/reports.test.ts
+
+
+[1m[46m RUN [49m[22m [36mv4.1.0 [39m[90mE:/Downloads/finance-tracker[39m
+
+[90mstderr[2m | __tests__/integration/api/reports.test.ts[2m > [22m[2mGET /api/reports/forecast[2m > [22m[2mretorna array vazio quando não há histórico
+[22m[39m[Unhandled Error] TypeError: Cannot read properties of undefined (reading 'searchParams')
+    at GET (E:/Downloads/finance-tracker/src/app/api/reports/forecast/route.ts:19:41)
+    at E:/Downloads/finance-tracker/__tests__/integration/api/reports.test.ts:126:23
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:296:11
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1258:26
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1681:20
+    at new Promise (<anonymous>)
+    at runWithCancel [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1678:10[90m)[39m
+    at [90mfile:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1660:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///E:/Downloads/finance-tracker/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1627:10[90m)[39m
+
+ [31m❯[39m __tests__/integration/api/reports.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 26[2mms[22m[39m
+     [32m✓[39m retorna array vazio quando não há transações no mês[32m 9[2mms[22m[39m
+     [32m✓[39m retorna categorias com totalAmount e percentage corretos[32m 2[2mms[22m[39m
+     [32m✓[39m percentages somam 100% quando há transações[32m 1[2mms[22m[39m
+     [32m✓[39m rejeita month ausente → retorna 400[32m 1[2mms[22m[39m
+     [32m✓[39m retorna array de ForecastItem para cada categoria com gastos[32m 2[2mms[22m[39m
+     [32m✓[39m marca lowConfidence=true para categorias com menos de 3 meses[32m 1[2mms[22m[39m
+[31m     [31m×[31m retorna array vazio quando não há histórico[39m[32m 9[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m __tests__/integration/api/reports.test.ts[2m > [22mGET /api/reports/forecast[2m > [22mretorna array vazio quando não há histórico
+[31m[1mAssertionError[22m: expected 500 to be 200 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 200[39m
+[31m+ 500[39m
+
+[36m [2m❯[22m __tests__/integration/api/reports.test.ts:[2m128:24[22m[39m
+    [90m126|[39m     [35mconst[39m res [33m=[39m [35mawait[39m [34mgetForecastReport[39m(req [35mas[39m any)
+    [90m127|[39m     [35mconst[39m json [33m=[39m [35mawait[39m res[33m.[39m[34mjson[39m()
+    [90m128|[39m     [34mexpect[39m(res[33m.[39mstatus)[33m.[39m[34mtoBe[39m([34m200[39m)
+    [90m   |[39m                        [31m^[39m
+    [90m129|[39m     [34mexpect[39m(json[33m.[39mdata)[33m.[39m[34mtoHaveLength[39m([34m0[39m)
+    [90m130|[39m   })
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m6 passed[39m[22m[90m (7)[39m
+[2m   Start at [22m 10:27:59
+[2m   Duration [22m 2.91s[2m (transform 123ms, setup 165ms, import 1.40s, tests 26ms, environment 1.09s)[22m
+
