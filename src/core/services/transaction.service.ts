@@ -60,6 +60,14 @@ export class TransactionService {
     await this.transactionRepo.softDelete(id)
   }
 
+  async getSummaryByCategory(month: string) {
+    return this.transactionRepo.sumByCategory(month)
+  }
+
+  async getMonthlyEvolution(months: number) {
+    return this.transactionRepo.sumByMonth(months)
+  }
+
   calculateNextOccurrence(date: Date, rule: RecurrenceRule): Date {
     const baseDate = new Date(date)
     
