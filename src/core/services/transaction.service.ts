@@ -8,7 +8,7 @@ import type {
   PaginatedTransactions,
   RecurrenceRule
 } from '../entities/transaction.entity'
-import { BudgetService } from './budget.service'
+import type { BudgetService } from './budget.service'
 import { NotFoundError } from '../../infrastructure/errors'
 
 export class TransactionService {
@@ -61,7 +61,7 @@ export class TransactionService {
   }
 
   calculateNextOccurrence(date: Date, rule: RecurrenceRule): Date {
-    let baseDate = new Date(date)
+    const baseDate = new Date(date)
     
     if (rule.frequency === 'monthly' && rule.day) {
       baseDate.setDate(rule.day)

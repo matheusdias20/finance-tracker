@@ -1,4 +1,4 @@
-import { TransactionService } from './transaction.service'
+import type { TransactionService } from './transaction.service'
 import type { ITransactionRepository } from '../repositories/transaction.repository.interface'
 
 export class RecurringService {

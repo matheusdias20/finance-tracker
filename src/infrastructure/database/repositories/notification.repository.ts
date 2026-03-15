@@ -1,5 +1,5 @@
 import { and, eq, lte, sql, gte } from 'drizzle-orm'
-import { Database } from '../client'
+import type { Database } from '../client'
 import { emailNotifications } from '../schema/email_notifications'
 import { DatabaseError } from '../../errors'
 import type { 

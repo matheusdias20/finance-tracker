@@ -1,5 +1,5 @@
 import { eq, isNull, sql } from 'drizzle-orm'
-import { Database } from '../client'
+import type { Database } from '../client'
 import { categories } from '../schema/categories'
 import { transactions } from '../schema/transactions'
 import { DatabaseError } from '../../errors'

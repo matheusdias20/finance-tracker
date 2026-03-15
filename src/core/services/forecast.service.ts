@@ -8,7 +8,9 @@ export class ForecastService {
     private readonly categoryRepo: ICategoryRepository
   ) {}
 
-  async getForecasts(_monthsAhead: number): Promise<ForecastItem[]> {
+  async getForecasts(monthsAhead: number): Promise<ForecastItem[]> {
+    if (monthsAhead <= 0) return []
+
     const categories = await this.categoryRepo.findAll()
     const activeExpenseCategories = categories.filter(c => c.type === 'expense')
     
