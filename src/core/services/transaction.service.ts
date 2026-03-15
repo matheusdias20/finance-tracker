@@ -8,8 +8,8 @@ import type {
   PaginatedTransactions,
   RecurrenceRule
 } from '../entities/transaction.entity'
-
-import { BudgetService } from './budget.service'
+import { NotFoundError } from '../../infrastructure/errors'
+import type { BudgetService } from './budget.service'
 
 export class TransactionService {
   constructor(
