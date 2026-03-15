@@ -34,4 +34,36 @@ describe('CategoryService', () => {
     vi.mocked(repo.findById).mockResolvedValue(null)
     await expect(service.update('999', {})).rejects.toThrow(NotFoundError)
   })
+
+  it('getAll: retorna todas as categorias', async () => {
+    const categories = [{ id: '1', name: 'Alimentação' }, { id: '2', name: 'Transporte' }]
+    vi.mocked(repo.findAll).mockResolvedValue(categories as any)
+    const result = await service.getAll()
+    expect(result).toEqual(categories)
+    expect(repo.findAll).toHaveBeenCalledTimes(1)
+  })
+
+  it('create: cria categoria e retorna o resultado do repo', async () => {
+    const newCat = { id: '3', name: 'Saúde', icon: '❤️', color: '#ef4444', type: 'expense' as const }
+    vi.mocked(repo.create).mockResolvedValue(newCat as any)
+    const result = await service.create({ name: 'Saúde', icon: '❤️', color: '#ef4444', type: 'expense' })
+    expect(result).toEqual(newCat)
+    expect(repo.create).toHaveBeenCalledTimes(1)
+  })
+
+  it('update: atualiza categoria quando ela existe', async () => {
+    vi.mocked(repo.findById).mockResolvedValue({ id: '1' } as any)
+    const updated = { id: '1', name: 'Alimentação Editada' }
+    vi.mocked(repo.update).mockResolvedValue(updated as any)
+    const result = await service.update('1', { name: 'Alimentação Editada' })
+    expect(result).toEqual(updated)
+    expect(repo.update).toHaveBeenCalledWith('1', { name: 'Alimentação Editada' })
+  })
+
+  it('getById: retorna categoria quando ela existe', async () => {
+    const cat = { id: '1', name: 'Alimentação' }
+    vi.mocked(repo.findById).mockResolvedValue(cat as any)
+    const result = await service.getById('1')
+    expect(result).toEqual(cat)
+  })
 })

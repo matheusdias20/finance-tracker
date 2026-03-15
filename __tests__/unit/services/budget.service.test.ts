@@ -61,4 +61,33 @@ describe('BudgetService', () => {
     const result = await service.checkAndNotify('c1', '2024-01')
     expect(result.exceeded).toBe(false)
   })
+
+  it('getByMonth: retorna lista de budgets com spentAmount', async () => {
+    const budgets = [{ id: '1', categoryId: 'c1', limitAmount: 100, spentAmount: 50, percentageUsed: 50, isExceeded: false }]
+    vi.mocked(repo.findByMonth).mockResolvedValue(budgets as any)
+    const result = await service.getByMonth('2024-01')
+    expect(result).toEqual(budgets)
+    expect(repo.findByMonth).toHaveBeenCalledWith('2024-01')
+  })
+
+  it('update: retorna budget atualizado com sucesso', async () => {
+    const updatedBudget = { id: '1', limitAmount: 200 }
+    vi.mocked(repo.update).mockResolvedValue(updatedBudget as any)
+    const result = await service.update('1', 200)
+    expect(result).toEqual(updatedBudget)
+    expect(repo.update).toHaveBeenCalledWith('1', 200)
+  })
+
+  it('update: lança NotFoundError quando o repo falha', async () => {
+    vi.mocked(repo.update).mockRejectedValue(new Error('not found'))
+    await expect(service.update('999', 100)).rejects.toThrow('Orçamento não encontrado')
+  })
+
+  it('create: cria budget quando não existe duplicata', async () => {
+    vi.mocked(repo.findByCategoryAndMonth).mockResolvedValue(null)
+    const newBudget = { id: '1', categoryId: 'c1', limitAmount: 300 }
+    vi.mocked(repo.create).mockResolvedValue(newBudget as any)
+    const result = await service.create({ categoryId: 'c1', month: new Date('2024-06-01'), limitAmount: 300 })
+    expect(result).toEqual(newBudget)
+  })
 })

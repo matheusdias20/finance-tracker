@@ -93,4 +93,20 @@ describe('TransactionService', () => {
     expect(() => service.calculateNextOccurrence(new Date(), { frequency: 'invalid' as any }))
       .toThrow('Frequência de recorrência inválida')
   })
+
+  it('getSummaryByCategory() delegates to transactionRepo.sumByCategory', async () => {
+    const summary = [{ categoryId: 'c1', totalAmount: 500 }]
+    vi.mocked(mockTxRepo.sumByCategory).mockResolvedValue(summary as any)
+    const result = await service.getSummaryByCategory('2024-12')
+    expect(result).toEqual(summary)
+    expect(mockTxRepo.sumByCategory).toHaveBeenCalledWith('2024-12')
+  })
+
+  it('getMonthlyEvolution() delegates to transactionRepo.sumByMonth', async () => {
+    const evolution = [{ month: '2024-11', totalIncome: 3000, totalExpense: 1500, balance: 1500 }]
+    vi.mocked(mockTxRepo.sumByMonth).mockResolvedValue(evolution as any)
+    const result = await service.getMonthlyEvolution(6)
+    expect(result).toEqual(evolution)
+    expect(mockTxRepo.sumByMonth).toHaveBeenCalledWith(6)
+  })
 })
