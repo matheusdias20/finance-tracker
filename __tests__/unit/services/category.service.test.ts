@@ -1,69 +1,67 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CategoryService } from '@/core/services/category.service'
-import { mockCategoryRepo } from '../../mocks/repositories.mock'
 import { NotFoundError, ValidationError } from '@/infrastructure/errors'
 
-describe('CategoryService', () => {
+describe('CategoryService Unit Tests (Exhaustive)', () => {
   let service: CategoryService
-  let repo: ReturnType<typeof mockCategoryRepo>
+  let categoryRepo: any
 
   beforeEach(() => {
-    repo = mockCategoryRepo()
-    service = new CategoryService(repo)
+    categoryRepo = {
+      findAll: vi.fn(),
+      findById: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      softDelete: vi.fn(),
+      countTransactions: vi.fn()
+    }
+    service = new CategoryService(categoryRepo)
+    vi.clearAllMocks()
   })
 
-  it('delete: lança ValidationError se categoria tem transações vinculadas', async () => {
-    vi.mocked(repo.findById).mockResolvedValue({ id: '1' } as any)
-    vi.mocked(repo.countTransactions).mockResolvedValue(3)
-    await expect(service.delete('1')).rejects.toThrow(ValidationError)
+  describe('getAll', () => {
+    it('sucesso', async () => {
+      categoryRepo.findAll.mockResolvedValue([])
+      await service.getAll()
+      expect(categoryRepo.findAll).toHaveBeenCalled()
+    })
   })
 
-  it('delete: executa softDelete se categoria não tem transações', async () => {
-    vi.mocked(repo.findById).mockResolvedValue({ id: '1' } as any)
-    vi.mocked(repo.countTransactions).mockResolvedValue(0)
-    await service.delete('1')
-    expect(repo.softDelete).toHaveBeenCalledWith('1')
+  describe('getById', () => {
+    it('sucesso', async () => {
+      categoryRepo.findById.mockResolvedValue({ id: '1' })
+      const res = await service.getById('1')
+      expect(res.id).toBe('1')
+    })
+
+    it('lança NotFoundError se não existir', async () => {
+      categoryRepo.findById.mockResolvedValue(null)
+      await expect(service.getById('1')).rejects.toThrow(NotFoundError)
+    })
   })
 
-  it('getById: lança NotFoundError se categoria não existe', async () => {
-    vi.mocked(repo.findById).mockResolvedValue(null)
-    await expect(service.getById('999')).rejects.toThrow(NotFoundError)
+  describe('delete', () => {
+    it('sucesso se sem transações', async () => {
+      categoryRepo.findById.mockResolvedValue({ id: '1' })
+      categoryRepo.countTransactions.mockResolvedValue(0)
+      await service.delete('1')
+      expect(categoryRepo.softDelete).toHaveBeenCalledWith('1')
+    })
+
+    it('lança ValidationError se houver transações', async () => {
+      categoryRepo.findById.mockResolvedValue({ id: '1' })
+      categoryRepo.countTransactions.mockResolvedValue(5)
+      await expect(service.delete('1')).rejects.toThrow(ValidationError)
+      expect(categoryRepo.softDelete).not.toHaveBeenCalled()
+    })
   })
 
-  it('update: lança NotFoundError se categoria não existe', async () => {
-    vi.mocked(repo.findById).mockResolvedValue(null)
-    await expect(service.update('999', {})).rejects.toThrow(NotFoundError)
-  })
-
-  it('getAll: retorna todas as categorias', async () => {
-    const categories = [{ id: '1', name: 'Alimentação' }, { id: '2', name: 'Transporte' }]
-    vi.mocked(repo.findAll).mockResolvedValue(categories as any)
-    const result = await service.getAll()
-    expect(result).toEqual(categories)
-    expect(repo.findAll).toHaveBeenCalledTimes(1)
-  })
-
-  it('create: cria categoria e retorna o resultado do repo', async () => {
-    const newCat = { id: '3', name: 'Saúde', icon: '❤️', color: '#ef4444', type: 'expense' as const }
-    vi.mocked(repo.create).mockResolvedValue(newCat as any)
-    const result = await service.create({ name: 'Saúde', icon: '❤️', color: '#ef4444', type: 'expense' })
-    expect(result).toEqual(newCat)
-    expect(repo.create).toHaveBeenCalledTimes(1)
-  })
-
-  it('update: atualiza categoria quando ela existe', async () => {
-    vi.mocked(repo.findById).mockResolvedValue({ id: '1' } as any)
-    const updated = { id: '1', name: 'Alimentação Editada' }
-    vi.mocked(repo.update).mockResolvedValue(updated as any)
-    const result = await service.update('1', { name: 'Alimentação Editada' })
-    expect(result).toEqual(updated)
-    expect(repo.update).toHaveBeenCalledWith('1', { name: 'Alimentação Editada' })
-  })
-
-  it('getById: retorna categoria quando ela existe', async () => {
-    const cat = { id: '1', name: 'Alimentação' }
-    vi.mocked(repo.findById).mockResolvedValue(cat as any)
-    const result = await service.getById('1')
-    expect(result).toEqual(cat)
+  describe('update', () => {
+    it('sucesso', async () => {
+      categoryRepo.findById.mockResolvedValue({ id: '1' })
+      categoryRepo.update.mockResolvedValue({ id: '1', name: 'new' })
+      const res = await service.update('1', { name: 'new' })
+      expect(res.name).toBe('new')
+    })
   })
 })

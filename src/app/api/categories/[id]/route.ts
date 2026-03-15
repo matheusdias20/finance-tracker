@@ -13,6 +13,9 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: Request, { params }: Context) {
   try {
     const category = await categoryService.getById(params.id)
+    if (!category) {
+      return NextResponse.json({ error: 'Categoria não encontrada' }, { status: 404 })
+    }
     return successResponse(category)
   } catch (error) {
     return handleApiError(error)

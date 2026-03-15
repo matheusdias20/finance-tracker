@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { CategoryRepository } from '@/infrastructure/database/repositories/category.repository'
 
-describe('CategoryRepository Unit Tests (Mocked DB)', () => {
-  let repository: CategoryRepository
-  let dbMock: any
+import { DatabaseError } from '@/infrastructure/errors'
+
+describe('CategoryRepository Unit Tests (Exhaustive)', () => {
+  let repo: CategoryRepository
+  let mockDb: any
 
   beforeEach(() => {
-    dbMock = {
+    mockDb = {
       select: vi.fn().mockReturnThis(),
       from: vi.fn().mockReturnThis(),
       where: vi.fn().mockReturnThis(),
@@ -17,48 +19,115 @@ describe('CategoryRepository Unit Tests (Mocked DB)', () => {
       returning: vi.fn().mockReturnThis(),
       update: vi.fn().mockReturnThis(),
       set: vi.fn().mockReturnThis(),
-      then: (onFulfilled: any) => Promise.resolve([]).then(onFulfilled),
-      catch: (onRejected: any) => Promise.resolve([]).catch(onRejected)
     }
+    repo = new CategoryRepository(mockDb)
+    vi.clearAllMocks()
+  })
+
+  describe('findAll', () => {
+    it('sucesso', async () => {
+      mockDb.orderBy.mockResolvedValueOnce([{ id: '1', name: 'n', type: 'expense' }])
+      const res = await repo.findAll()
+      expect(res).toHaveLength(1)
+    })
     
-    repository = new CategoryRepository(dbMock)
+    it('lida com erro de banco', async () => {
+      mockDb.orderBy.mockRejectedValue(new Error('fail'))
+      await expect(repo.findAll()).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('findAll deve retornar lista de categorias', async () => {
-    const mockRecords = [{ id: '1', name: 'Cat 1', icon: 'icon', color: '#000', type: 'expense' }]
-    dbMock.then = (onFulfilled: any) => Promise.resolve(mockRecords).then(onFulfilled)
-    const result = await repository.findAll()
-    expect(result).toHaveLength(1)
+  describe('findById', () => {
+    it('retorna null se não houver registro', async () => {
+      mockDb.limit.mockResolvedValue([])
+      const res = await repo.findById('123')
+      expect(res).toBeNull()
+    })
+    
+    it('retorna null se registro estiver deletado', async () => {
+      mockDb.limit.mockResolvedValue([{ id: '1', deletedAt: new Date() }])
+      const res = await repo.findById('1')
+      expect(res).toBeNull()
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.limit.mockRejectedValue(new Error('fail'))
+      await expect(repo.findById('1')).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('findById deve retornar categoria ou nulo', async () => {
-    const mockRecord = { id: '1', name: 'Cat 1', icon: 'icon', color: '#000', type: 'expense' }
-    dbMock.then = vi.fn()
-      .mockImplementationOnce((onFulfilled) => Promise.resolve([mockRecord]).then(onFulfilled))
-      .mockImplementationOnce((onFulfilled) => Promise.resolve([]).then(onFulfilled))
+  describe('create', () => {
+    it('sucesso com budgetLimit', async () => {
+      mockDb.returning.mockResolvedValue([{ id: '1', budgetLimit: '100', name: 'n', icon: 'i', color: 'c', type: 'expense' }])
+      const res = await repo.create({ name: 'n', icon: 'i', color: 'c', type: 'expense', budgetLimit: 100 })
+      expect(res.budgetLimit).toBe(100)
+    })
 
-    const found = await repository.findById('1')
-    expect(found?.id).toBe('1')
+    it('sucesso sem budgetLimit', async () => {
+      mockDb.returning.mockResolvedValue([{ id: '1', budgetLimit: null, name: 'n', icon: 'i', color: 'c', type: 'expense' }])
+      const res = await repo.create({ name: 'n', icon: 'i', color: 'c', type: 'expense' })
+      expect(res.budgetLimit).toBeNull()
+    })
 
-    const notFound = await repository.findById('2')
-    expect(notFound).toBeNull()
+    it('lida com erro de banco', async () => {
+      mockDb.returning.mockRejectedValue(new Error('fail'))
+      await expect(repo.create({} as any)).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('update deve atualizar e retornar categoria', async () => {
-    const mockRecord = { id: '1', name: 'Updated', icon: 'icon', color: '#000', type: 'expense' }
-    dbMock.then = (onFulfilled: any) => Promise.resolve([mockRecord]).then(onFulfilled)
-    const result = await repository.update('1', { name: 'Updated' })
-    expect(result.name).toBe('Updated')
+  describe('update', () => {
+    it('sucesso com todos os campos', async () => {
+      mockDb.returning.mockResolvedValue([{ id: '1', name: 'new', icon: 'i', color: 'c', budgetLimit: '200' }])
+      const res = await repo.update('1', { name: 'new', icon: 'i', color: 'c', budgetLimit: 200 })
+      expect(res.name).toBe('new')
+    })
+
+    it('sucesso com budgetLimit null', async () => {
+      mockDb.returning.mockResolvedValue([{ id: '1', budgetLimit: null }])
+      const res = await repo.update('1', { budgetLimit: null })
+      expect(res.budgetLimit).toBeNull()
+    })
+
+    it('lança erro se record for nulo (não encontrado)', async () => {
+      mockDb.returning.mockResolvedValue([])
+      await expect(repo.update('1', { name: 'n' })).rejects.toThrow(DatabaseError)
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.returning.mockRejectedValue(new Error('fail'))
+      await expect(repo.update('1', {})).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('softDelete deve marcar como deletada', async () => {
-    await repository.softDelete('1')
-    expect(dbMock.update).toHaveBeenCalled()
+  describe('softDelete', () => {
+    it('sucesso', async () => {
+      mockDb.where.mockResolvedValue(undefined)
+      await repo.softDelete('1')
+      expect(mockDb.update).toHaveBeenCalled()
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.softDelete('1')).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('countTransactions deve retornar contagem', async () => {
-    dbMock.then = (onFulfilled: any) => Promise.resolve([{ count: 5 }]).then(onFulfilled)
-    const result = await repository.countTransactions('1')
-    expect(result).toBe(5)
+  describe('countTransactions', () => {
+    it('sucesso', async () => {
+      mockDb.where.mockResolvedValue([{ count: 5 }])
+      const res = await repo.countTransactions('1')
+      expect(res).toBe(5)
+    })
+
+    it('retorna 0 se result for vazio', async () => {
+      mockDb.where.mockResolvedValue([])
+      const res = await repo.countTransactions('1')
+      expect(res).toBe(0)
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.countTransactions('1')).rejects.toThrow(DatabaseError)
+    })
   })
 })

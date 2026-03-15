@@ -2,61 +2,103 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { NotificationRepository } from '@/infrastructure/database/repositories/notification.repository'
 import { DatabaseError } from '@/infrastructure/errors'
 
-describe('NotificationRepository Unit Tests (Mocked DB)', () => {
-  let repository: NotificationRepository
-  let dbMock: any
+describe('NotificationRepository Unit Tests (Exhaustive)', () => {
+  let repo: NotificationRepository
+  let mockDb: any
 
   beforeEach(() => {
-    dbMock = {
+    mockDb = {
       select: vi.fn().mockReturnThis(),
       from: vi.fn().mockReturnThis(),
       where: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockReturnThis(),
+      update: vi.fn().mockReturnThis(),
+      set: vi.fn().mockReturnThis(),
       insert: vi.fn().mockReturnThis(),
       values: vi.fn().mockReturnThis(),
       returning: vi.fn().mockReturnThis(),
-      update: vi.fn().mockReturnThis(),
-      set: vi.fn().mockReturnThis(),
-      then: (onFulfilled: any) => Promise.resolve([]).then(onFulfilled),
-      catch: (onRejected: any) => Promise.resolve([]).catch(onRejected)
     }
-    repository = new NotificationRepository(dbMock)
+    repo = new NotificationRepository(mockDb)
+    vi.clearAllMocks()
   })
 
-  it('findPending deve retornar notificações pendentes', async () => {
-    const mockRecord = { id: 'n1', type: 'budget_exceeded', status: 'pending', scheduledAt: new Date(), payload: {} }
-    dbMock.then = (onFulfilled: any) => Promise.resolve([mockRecord]).then(onFulfilled)
-    const result = await repository.findPending()
-    expect(result).toHaveLength(1)
-    expect(result[0].id).toBe('n1')
+  describe('findPending', () => {
+    it('sucesso', async () => {
+      mockDb.where.mockResolvedValue([
+        { id: '1', type: 'budget_exceeded', status: 'pending', scheduledAt: new Date(), payload: {} }
+      ])
+      const res = await repo.findPending()
+      expect(res).toHaveLength(1)
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.findPending()).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('wasAlreadySentToday deve retornar boolean', async () => {
-    dbMock.then = (onFulfilled: any) => Promise.resolve([{ count: 1 }]).then(onFulfilled)
-    const result = await repository.wasAlreadySentToday('budget_exceeded', 'ref-1')
-    expect(result).toBe(true)
+  describe('wasAlreadySentToday', () => {
+    it('retorna true se count > 0', async () => {
+      mockDb.where.mockResolvedValue([{ count: 1 }])
+      const res = await repo.wasAlreadySentToday('budget_exceeded', 'ref-1')
+      expect(res).toBe(true)
+    })
+
+    it('retorna false se count is 0', async () => {
+      mockDb.where.mockResolvedValue([{ count: 0 }])
+      const res = await repo.wasAlreadySentToday('budget_exceeded', 'ref-1')
+      expect(res).toBe(false)
+    })
+
+    it('handles null result', async () => {
+      mockDb.where.mockResolvedValue([])
+      const res = await repo.wasAlreadySentToday('budget_exceeded', 'ref-1')
+      expect(res).toBe(false)
+    })
+
+    it('lida com erro de banco', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.wasAlreadySentToday('budget_exceeded', 'r')).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('markSent deve atualizar status', async () => {
-    await repository.markSent('n1')
-    expect(dbMock.update).toHaveBeenCalled()
+  describe('markSent', () => {
+    it('sucesso', async () => {
+      mockDb.where.mockResolvedValue(undefined)
+      await repo.markSent('1')
+      expect(mockDb.update).toHaveBeenCalled()
+    })
+
+    it('lida com erro', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.markSent('1')).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('markFailed deve atualizar status', async () => {
-    await repository.markFailed('n1')
-    expect(dbMock.update).toHaveBeenCalled()
+  describe('markFailed', () => {
+    it('sucesso', async () => {
+      mockDb.where.mockResolvedValue(undefined)
+      await repo.markFailed('1')
+      expect(mockDb.update).toHaveBeenCalled()
+    })
+
+    it('lida com erro', async () => {
+      mockDb.where.mockRejectedValue(new Error('fail'))
+      await expect(repo.markFailed('1')).rejects.toThrow(DatabaseError)
+    })
   })
 
-  it('create deve inserir e retornar notificação', async () => {
-    const mockRecord = { id: 'n1', type: 'budget_exceeded', status: 'pending', scheduledAt: new Date(), payload: {} }
-    dbMock.then = (onFulfilled: any) => Promise.resolve([mockRecord]).then(onFulfilled)
-    const result = await repository.create('budget_exceeded', { ref: '1' }, new Date())
-    expect(result.id).toBe('n1')
-  })
+  describe('create', () => {
+    it('sucesso', async () => {
+      mockDb.returning.mockResolvedValue([
+        { id: '1', type: 'budget_exceeded', status: 'pending', scheduledAt: new Date(), payload: {} }
+      ])
+      const res = await repo.create('budget_exceeded', {}, new Date())
+      expect(res.id).toBe('1')
+    })
 
-  it('deve lançar DatabaseError em caso de falha', async () => {
-    dbMock.then = (_onFulfilled: any, onRejected: any) => Promise.reject(new Error('fail')).catch(onRejected)
-    await expect(repository.findPending()).rejects.toThrow(DatabaseError)
+    it('lida com erro', async () => {
+      mockDb.returning.mockRejectedValue(new Error('fail'))
+      await expect(repo.create('type' as any, {}, new Date())).rejects.toThrow(DatabaseError)
+    })
   })
 })

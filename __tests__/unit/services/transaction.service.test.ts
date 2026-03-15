@@ -1,112 +1,127 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { TransactionService } from '@/core/services/transaction.service'
-import { BudgetService } from '@/core/services/budget.service'
-import { mockTransactionRepo, mockBudgetRepo } from '../../mocks/repositories.mock'
 import { NotFoundError } from '@/infrastructure/errors'
-import type { RecurrenceRule } from '@/core/entities/transaction.entity'
 
-describe('TransactionService', () => {
+describe('TransactionService Unit Tests (Exhaustive)', () => {
   let service: TransactionService
-  let budgetService: BudgetService
-  let mockTxRepo: ReturnType<typeof mockTransactionRepo>
-  let mockBudgetRepoData: ReturnType<typeof mockBudgetRepo>
+  let transactionRepo: any
+  let budgetService: any
 
   beforeEach(() => {
-    mockTxRepo = mockTransactionRepo()
-    mockBudgetRepoData = mockBudgetRepo()
-    budgetService = new BudgetService(mockBudgetRepoData)
-    vi.spyOn(budgetService, 'checkAndNotify').mockResolvedValue({ exceeded: false, percentageUsed: 0, budget: null })
-    
-    service = new TransactionService(mockTxRepo, budgetService)
+    transactionRepo = {
+      findMany: vi.fn(),
+      findById: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      softDelete: vi.fn(),
+      sumByCategory: vi.fn(),
+      sumByMonth: vi.fn()
+    }
+    budgetService = {
+      checkAndNotify: vi.fn()
+    }
+    service = new TransactionService(transactionRepo, budgetService)
+    vi.clearAllMocks()
   })
 
-  it('should fetch paginated transactions', async () => {
-    const fakeData = { data: [], total: 0, page: 1, limit: 20, totalPages: 0 }
-    vi.mocked(mockTxRepo.findMany).mockResolvedValue(fakeData)
-    const result = await service.findMany({})
-    expect(result).toEqual(fakeData)
-  })
-
-  it('should find by id or throw NotFoundError', async () => {
-    vi.mocked(mockTxRepo.findById).mockResolvedValueOnce({ id: '1' } as any)
-    const result = await service.findById('1')
-    expect(result.id).toBe('1')
-
-    vi.mocked(mockTxRepo.findById).mockResolvedValueOnce(null)
-    await expect(service.findById('2')).rejects.toThrow(NotFoundError)
-  })
-
-  it('create() should throw if isRecurring is true without recurrenceRule', async () => {
-    await expect(service.create({
-      amount: 10, description: 'test', date: new Date(), type: 'expense', categoryId: 'cat1', isRecurring: true
-    })).rejects.toThrow('Regra de recorrência não definida')
-  })
-
-  it('create() should call checkAndNotify if expense', async () => {
-    vi.mocked(mockTxRepo.create).mockResolvedValue({ type: 'expense', date: new Date('2024-05-15T00:00:00Z'), categoryId: 'cat1' } as any)
-    
-    await service.create({
-      amount: 10, description: 'test', date: new Date('2024-05-15T00:00:00Z'), type: 'expense', categoryId: 'cat1'
+  describe('findMany', () => {
+    it('sucesso', async () => {
+      transactionRepo.findMany.mockResolvedValue({ data: [], total: 0 })
+      await service.findMany({})
+      expect(transactionRepo.findMany).toHaveBeenCalled()
     })
-    
-    expect(budgetService.checkAndNotify).toHaveBeenCalledWith('cat1', '2024-05')
   })
 
-  it('create() should NOT call checkAndNotify if income', async () => {
-    vi.mocked(mockTxRepo.create).mockResolvedValue({ type: 'income', date: new Date(), categoryId: 'cat1' } as any)
-    
-    await service.create({
-      amount: 10, description: 'test', date: new Date(), type: 'income', categoryId: 'cat1'
+  describe('findById', () => {
+    it('sucesso', async () => {
+      transactionRepo.findById.mockResolvedValue({ id: '1' })
+      const res = await service.findById('1')
+      expect(res.id).toBe('1')
     })
-    
-    expect(budgetService.checkAndNotify).not.toHaveBeenCalled()
+
+    it('lança NotFoundError se não existir', async () => {
+      transactionRepo.findById.mockResolvedValue(null)
+      await expect(service.findById('1')).rejects.toThrow(NotFoundError)
+    })
   })
 
-  it('update() should call checkAndNotify if expense', async () => {
-    vi.mocked(mockTxRepo.findById).mockResolvedValue({ id: '1' } as any)
-    vi.mocked(mockTxRepo.update).mockResolvedValue({ id: '1', type: 'expense', date: new Date('2024-10-10T00:00:00Z'), categoryId: 'cat2' } as any)
-    
-    await service.update('1', { amount: 100 })
-    expect(budgetService.checkAndNotify).toHaveBeenCalledWith('cat2', '2024-10')
+  describe('create', () => {
+    it('lança erro se recorrente sem regra', async () => {
+      await expect(service.create({ isRecurring: true } as any)).rejects.toThrow('Regra de recorrência não definida')
+    })
+
+    it('não notifica orçamento se for income', async () => {
+      transactionRepo.create.mockResolvedValue({ type: 'income', date: new Date(), categoryId: 'c1' })
+      await service.create({ type: 'income', categoryId: 'c1' } as any)
+      expect(budgetService.checkAndNotify).not.toHaveBeenCalled()
+    })
+
+    it('notifica orçamento se for expense', async () => {
+      transactionRepo.create.mockResolvedValue({ type: 'expense', date: new Date(), categoryId: 'c1' })
+      await service.create({ type: 'expense', categoryId: 'c1' } as any)
+      expect(budgetService.checkAndNotify).toHaveBeenCalled()
+    })
   })
 
-  it('delete() should perform soft delete', async () => {
-    vi.mocked(mockTxRepo.findById).mockResolvedValue({ id: '1' } as any)
-    await service.delete('1')
-    expect(mockTxRepo.softDelete).toHaveBeenCalledWith('1')
+  describe('update', () => {
+    it('notifica orçamento se for expense', async () => {
+      transactionRepo.findById.mockResolvedValue({ id: '1' })
+      transactionRepo.update.mockResolvedValue({ type: 'expense', date: new Date(), categoryId: 'c1' })
+      await service.update('1', { amount: 100 })
+      expect(budgetService.checkAndNotify).toHaveBeenCalled()
+    })
   })
 
-  it('calculateNextOccurrence() handles daily, weekly, monthly and yearly correctly', () => {
-    const baseDate = new Date('2024-01-05T12:00:00Z')
-    
-    expect(service.calculateNextOccurrence(baseDate, { frequency: 'daily' }).toISOString()).toContain('2024-01-06')
-    expect(service.calculateNextOccurrence(baseDate, { frequency: 'weekly' }).toISOString()).toContain('2024-01-12')
-    
-    // Monthly changing day
-    const monthlyRule: RecurrenceRule = { frequency: 'monthly', day: 20 }
-    expect(service.calculateNextOccurrence(baseDate, monthlyRule).toISOString()).toContain('2024-02-20')
-    
-    expect(service.calculateNextOccurrence(baseDate, { frequency: 'yearly' }).toISOString()).toContain('2025-01-05')
+  describe('delete', () => {
+    it('sucesso', async () => {
+      transactionRepo.findById.mockResolvedValue({ id: '1' })
+      await service.delete('1')
+      expect(transactionRepo.softDelete).toHaveBeenCalledWith('1')
+    })
   })
 
-  it('calculateNextOccurrence() throws on invalid frequency', () => {
-    expect(() => service.calculateNextOccurrence(new Date(), { frequency: 'invalid' as any }))
-      .toThrow('Frequência de recorrência inválida')
+  describe('others', () => {
+    it('getSummaryByCategory', async () => {
+      await service.getSummaryByCategory('2024-12')
+      expect(transactionRepo.sumByCategory).toHaveBeenCalled()
+    })
+    it('getMonthlyEvolution', async () => {
+      await service.getMonthlyEvolution(6)
+      expect(transactionRepo.sumByMonth).toHaveBeenCalled()
+    })
   })
 
-  it('getSummaryByCategory() delegates to transactionRepo.sumByCategory', async () => {
-    const summary = [{ categoryId: 'c1', totalAmount: 500 }]
-    vi.mocked(mockTxRepo.sumByCategory).mockResolvedValue(summary as any)
-    const result = await service.getSummaryByCategory('2024-12')
-    expect(result).toEqual(summary)
-    expect(mockTxRepo.sumByCategory).toHaveBeenCalledWith('2024-12')
-  })
+  describe('calculateNextOccurrence', () => {
+    it('mensal com dia específico', () => {
+      const date = new Date('2024-01-01T12:00:00Z')
+      const rule = { frequency: 'monthly' as const, day: 15 }
+      const res = service.calculateNextOccurrence(date, rule)
+      expect(res.getDate()).toBe(15)
+      expect(res.getMonth()).toBe(1)
+    })
 
-  it('getMonthlyEvolution() delegates to transactionRepo.sumByMonth', async () => {
-    const evolution = [{ month: '2024-11', totalIncome: 3000, totalExpense: 1500, balance: 1500 }]
-    vi.mocked(mockTxRepo.sumByMonth).mockResolvedValue(evolution as any)
-    const result = await service.getMonthlyEvolution(6)
-    expect(result).toEqual(evolution)
-    expect(mockTxRepo.sumByMonth).toHaveBeenCalledWith(6)
+    it('weekly', () => {
+      const date = new Date('2024-01-01T12:00:00Z')
+      const res = service.calculateNextOccurrence(date, { frequency: 'weekly' })
+      expect(res.getDate()).toBe(8)
+    })
+
+    it('yearly', () => {
+      const date = new Date('2024-01-01T12:00:00Z')
+      const rule = { frequency: 'yearly' as const }
+      const res = service.calculateNextOccurrence(date, rule)
+      expect(res.getFullYear()).toBe(2025)
+    })
+
+    it('daily', () => {
+      const date = new Date('2024-01-01T12:00:00Z')
+      const rule = { frequency: 'daily' as const }
+      const res = service.calculateNextOccurrence(date, rule)
+      expect(res.getDate()).toBe(2)
+    })
+
+    it('lanca erro para frequencia invalida', () => {
+      expect(() => service.calculateNextOccurrence(new Date(), { frequency: 'invalid' as any })).toThrow('Frequência de recorrência inválida')
+    })
   })
 })

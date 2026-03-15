@@ -1,0 +1,10 @@
+{
+  "email": "valid@email.com",
+  "enabled": true,
+  "preferences": {
+    "budgetAlerts": true,
+    "weeklySummary": true,
+    "monthlySummary": true,
+    "recurringReminders": true
+  }
+}

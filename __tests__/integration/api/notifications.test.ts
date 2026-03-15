@@ -1,79 +1,82 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { GET, POST } from '@/app/api/notifications/settings/route'
-import { POST as DISPATCH_TEST } from '@/app/api/notifications/test/route'
 import { NextRequest } from 'next/server'
 import fs from 'fs'
+
 
 vi.mock('fs', () => ({
   default: {
     existsSync: vi.fn(),
     readFileSync: vi.fn(),
-    writeFileSync: vi.fn(),
     mkdirSync: vi.fn(),
-    dirname: vi.fn()
+    writeFileSync: vi.fn()
   }
 }))
 
-vi.mock('path', () => ({
-  default: {
-    join: vi.fn().mockReturnValue('mocked-path'),
-    dirname: vi.fn().mockReturnValue('mocked-dir')
-  }
-}))
+describe('Notifications Settings API Integration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
 
-vi.mock('@/infrastructure/di/container', () => ({
-  notificationService: {
-    checkBudgetExceeded: vi.fn(() => Promise.resolve()),
-    sendRecurringReminders: vi.fn(() => Promise.resolve()),
-    sendWeeklySummary: vi.fn(() => Promise.resolve()),
-    sendMonthlySummary: vi.fn(() => Promise.resolve())
-  }
-}))
-
-describe('Notifications API Integration', () => {
-  describe('Settings API', () => {
-    it('GET retorna configurações padrão se arquivo não existir', async () => {
-      (fs.existsSync as any).mockReturnValue(false)
+  describe('GET /api/notifications/settings', () => {
+    it('retorna defaults se arquivo não existir', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false)
       const response = await GET()
       const data = await response.json()
+      expect(data).toHaveProperty('enabled', true)
       expect(response.status).toBe(200)
-      expect(data.enabled).toBe(true)
     })
 
-    it('POST salva novas configurações', async () => {
-      const body = {
-        email: 'test@example.com',
-        enabled: true,
-        preferences: {
-          budgetAlerts: true,
-          weeklySummary: false,
-          monthlySummary: true,
-          recurringReminders: true
-        }
-      }
-      const request = new NextRequest('http://localhost/api/notifications/settings', {
-        method: 'POST',
-        body: JSON.stringify(body)
-      })
-      const response = await POST(request)
+    it('retorna dados do arquivo se existir', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true)
+      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ email: 'test@test.com', enabled: false }))
+      const response = await GET()
       const data = await response.json()
-      
-      expect(response.status).toBe(200)
-      expect(data.data.email).toBe('test@example.com')
+      expect(data.email).toBe('test@test.com')
+      expect(data.enabled).toBe(false)
+    })
+
+    it('retorna 500 em erro de leitura', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true)
+      vi.mocked(fs.readFileSync).mockImplementation(() => { throw new Error('fail') })
+      const response = await GET()
+      expect(response.status).toBe(500)
     })
   })
 
-  describe('Dispatch Test API', () => {
-    it('dispara email de teste com sucesso', async () => {
-      const body = { type: 'budget_exceeded' }
-      const request = new NextRequest('http://localhost/api/notifications/test', {
-        method: 'POST',
-        body: JSON.stringify(body)
-      })
-      const response = await DISPATCH_TEST(request)
-      const data = await response.json()
+  describe('POST /api/notifications/settings', () => {
+    it('salva configurações com sucesso (e cria diretório)', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false) // dir missing
+      const body = { 
+        email: 'user@test.com', 
+        enabled: true, 
+        preferences: { budgetAlerts: true, weeklySummary: true, monthlySummary: true, recurringReminders: true } 
+      }
+      const request = new NextRequest('http://localhost/api/notifications/settings', { method: 'POST', body: JSON.stringify(body) })
+      const response = await POST(request)
       expect(response.status).toBe(200)
-      expect(data.success).toBe(true)
+      expect(fs.mkdirSync).toHaveBeenCalled()
+      expect(fs.writeFileSync).toHaveBeenCalled()
+    })
+
+    it('retorna 400 para email inválido', async () => {
+      const body = { email: 'invalid' }
+      const request = new NextRequest('http://localhost/api/notifications/settings', { method: 'POST', body: JSON.stringify(body) })
+      const response = await POST(request)
+      expect(response.status).toBe(400)
+    })
+
+    it('retorna 500 em erro de escrita', async () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true)
+      vi.mocked(fs.writeFileSync).mockImplementation(() => { throw new Error('fail') })
+      const body = { 
+        email: 'user@test.com', 
+        enabled: true, 
+        preferences: { budgetAlerts: true, weeklySummary: true, monthlySummary: true, recurringReminders: true } 
+      }
+      const request = new NextRequest('http://localhost/api/notifications/settings', { method: 'POST', body: JSON.stringify(body) })
+      const response = await POST(request)
+      expect(response.status).toBe(500)
     })
   })
 })

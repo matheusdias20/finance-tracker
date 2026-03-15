@@ -10,7 +10,18 @@ const getResendApiKey = () => {
   return 're_dummy_1234567890'
 }
 
-const resend = new Resend(getResendApiKey())
+let resendInstance: Resend | null = null
+const getResend = () => {
+  if (!resendInstance) {
+    resendInstance = new Resend(getResendApiKey())
+  }
+  return resendInstance
+}
+
+// Para uso exclusivo em testes
+export const __resetResend = () => {
+  resendInstance = null
+}
 
 interface SendEmailOptions {
   to: string
@@ -30,7 +41,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ success: b
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
-      const { data, error } = await resend.emails.send({
+      const { data, error } = await getResend().emails.send({
         from: `Finance Tracker <${process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'}>`,
         to: [options.to],
         subject: options.subject,

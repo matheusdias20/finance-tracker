@@ -13,6 +13,9 @@ export const dynamic = 'force-dynamic'
 export async function GET(_request: Request, { params }: Context) {
   try {
     const transaction = await transactionService.findById(params.id)
+    if (!transaction) {
+      return NextResponse.json({ error: 'Transação não encontrada' }, { status: 404 })
+    }
     return successResponse(transaction)
   } catch (error) {
     return handleApiError(error)
