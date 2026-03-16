@@ -1,0 +1,6 @@
+﻿
+> temp-app@0.1.0 type-check
+> tsc --noEmit
+
+__tests__/mocks/repositories.mock.ts(15,67): error TS2741: Property 'deleteAll' is missing in type '{ findMany: Mock<Procedure>; findById: Mock<Procedure>; findRecurringDue: Mock<Procedure>; create: Mock<Procedure>; ... 5 more ...; getHistoryByCategory: Mock<...>; }' but required in type 'ITransactionRepository'.
+__tests__/mocks/repositories.mock.ts(28,57): error TS2741: Property 'deleteAll' is missing in type '{ findByMonth: Mock<Procedure>; findByCategoryAndMonth: Mock<Procedure>; create: Mock<Procedure>; update: Mock<Procedure>; }' but required in type 'IBudgetRepository'.

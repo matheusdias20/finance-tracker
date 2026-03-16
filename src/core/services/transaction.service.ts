@@ -60,6 +60,10 @@ export class TransactionService {
     await this.transactionRepo.softDelete(id)
   }
 
+  async deleteAll(): Promise<void> {
+    await this.transactionRepo.deleteAll()
+  }
+
   async getSummaryByCategory(month: string) {
     return this.transactionRepo.sumByCategory(month)
   }

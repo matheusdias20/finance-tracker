@@ -1,0 +1,26 @@
+
+./src/presentation/components/reports/balance-area-chart.tsx
+32:13  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/presentation/components/reports/monthly-bar-chart.tsx
+29:52  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+37:32  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/presentation/components/settings/data-section.tsx
+24:42  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+25:50  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+42:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+67:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/presentation/components/settings/notification-form.tsx
+6:1  Warning: Imports "NotificationSettings" are only used as type.  @typescript-eslint/consistent-type-imports
+45:14  Error: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+69:53  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+./src/presentation/components/settings/settings-client.tsx
+4:1  Warning: All imports in the declaration are only used as types. Use `import type`.  @typescript-eslint/consistent-type-imports
+
+./src/presentation/components/settings/testing-section.tsx
+56:21  Error: Unexpected any. Specify a different type.  @typescript-eslint/no-explicit-any
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules

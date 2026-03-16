@@ -6,6 +6,16 @@ import { DatabaseError } from '../../errors'
 import type { IBudgetRepository } from '../../../core/repositories/budget.repository.interface'
 import type { Budget, BudgetWithSpent, CreateBudgetInput } from '../../../core/entities/budget.entity'
 
+interface BudgetRecord {
+  id: string
+  categoryId: string
+  month: string
+  limitAmount: string
+  createdAt: Date | null
+  updatedAt: Date | null
+  deletedAt: Date | null
+}
+
 export class BudgetRepository implements IBudgetRepository {
   constructor(private readonly db: Database) {}
 
@@ -18,6 +28,8 @@ export class BudgetRepository implements IBudgetRepository {
           month: budgets.month,
           limitAmount: budgets.limitAmount,
           createdAt: budgets.createdAt,
+          updatedAt: budgets.updatedAt,
+          deletedAt: budgets.deletedAt,
           spentAmount: sql<number>`COALESCE(SUM(${transactions.amount}::numeric), 0)::numeric`,
         })
         .from(budgets)
@@ -31,11 +43,14 @@ export class BudgetRepository implements IBudgetRepository {
           )
         )
         .where(
-          eq(sql`DATE_TRUNC('month', ${budgets.month}::date)`, sql`DATE_TRUNC('month', ${month}::date)`)
+          and(
+            eq(sql`DATE_TRUNC('month', ${budgets.month}::date)`, sql`DATE_TRUNC('month', ${month}::date)`),
+            isNull(budgets.deletedAt)
+          )
         )
         .groupBy(budgets.id)
 
-      return records.map(r => this.mapToWithSpent(r, r.spentAmount))
+      return (records as (BudgetRecord & { spentAmount: number })[]).map(r => this.mapToWithSpent(r, r.spentAmount))
     } catch (error) {
       throw new DatabaseError(`Failed to fetch budgets by month: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
@@ -52,6 +67,8 @@ export class BudgetRepository implements IBudgetRepository {
           month: budgets.month,
           limitAmount: budgets.limitAmount,
           createdAt: budgets.createdAt,
+          updatedAt: budgets.updatedAt,
+          deletedAt: budgets.deletedAt,
           spentAmount: sql<number>`COALESCE(SUM(${transactions.amount}::numeric), 0)::numeric`,
         })
         .from(budgets)
@@ -67,14 +84,16 @@ export class BudgetRepository implements IBudgetRepository {
         .where(
           and(
             eq(budgets.categoryId, categoryId),
-            sql`TO_CHAR(${budgets.month}::date, 'YYYY-MM') = ${monthPrefix}`
+            sql`TO_CHAR(${budgets.month}::date, 'YYYY-MM') = ${monthPrefix}`,
+            isNull(budgets.deletedAt)
           )
         )
         .groupBy(budgets.id)
         .limit(1)
 
       if (records.length === 0) return null
-      return this.mapToWithSpent(records[0], records[0].spentAmount)
+      const record = records[0] as BudgetRecord & { spentAmount: number }
+      return this.mapToWithSpent(record, record.spentAmount)
     } catch (error) {
       throw new DatabaseError(`Failed to fetch budget by category and month: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
@@ -91,7 +110,7 @@ export class BudgetRepository implements IBudgetRepository {
         })
         .returning()
 
-      return this.mapToEntity(record)
+      return this.mapToEntity(record as BudgetRecord)
     } catch (error) {
       throw new DatabaseError(`Failed to create budget: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
@@ -101,28 +120,41 @@ export class BudgetRepository implements IBudgetRepository {
     try {
       const [record] = await this.db
         .update(budgets)
-        .set({ limitAmount: limitAmount.toString() })
-        .where(eq(budgets.id, id))
+        .set({ limitAmount: limitAmount.toString(), updatedAt: new Date() })
+        .where(and(eq(budgets.id, id), isNull(budgets.deletedAt)))
         .returning()
 
       if (!record) throw new Error('Budget not found for update')
-      return this.mapToEntity(record)
+      return this.mapToEntity(record as BudgetRecord)
     } catch (error) {
       throw new DatabaseError(`Failed to update budget: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
-  private mapToEntity(record: typeof budgets.$inferSelect): Budget {
+  async deleteAll(): Promise<void> {
+    try {
+      await this.db
+        .update(budgets)
+        .set({ deletedAt: new Date(), updatedAt: new Date() })
+        .where(isNull(budgets.deletedAt))
+    } catch (error) {
+      throw new DatabaseError(`Failed to delete all budgets: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  private mapToEntity(record: BudgetRecord): Budget {
     return {
       id: record.id,
       categoryId: record.categoryId,
       month: new Date(record.month),
       limitAmount: parseFloat(record.limitAmount),
       createdAt: record.createdAt || new Date(),
+      updatedAt: record.updatedAt || new Date(),
+      deletedAt: record.deletedAt,
     }
   }
 
-  private mapToWithSpent(record: typeof budgets.$inferSelect, spentAmountStr: number | string): BudgetWithSpent {
+  private mapToWithSpent(record: BudgetRecord, spentAmountStr: number | string): BudgetWithSpent {
     const budget = this.mapToEntity(record)
     const spentAmount = Number(spentAmountStr)
     const percentageUsed = budget.limitAmount > 0 ? (spentAmount / budget.limitAmount) * 100 : 0

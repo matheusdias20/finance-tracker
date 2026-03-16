@@ -20,9 +20,9 @@ const getCachedReport = unstable_cache(
       const category = categoryMap.get(item.categoryId)
       return {
         categoryId: item.categoryId,
-        name: category?.name ?? 'Desconhecida',
-        color: category?.color ?? '#9ca3af',
-        icon: category?.icon ?? 'help-circle',
+        categoryName: category?.name ?? 'Desconhecida',
+        categoryColor: category?.color ?? '#9ca3af',
+        categoryIcon: category?.icon ?? 'help-circle',
         totalAmount: item.totalAmount,
         percentage: total > 0 ? (item.totalAmount / total) * 100 : 0
       }

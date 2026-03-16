@@ -31,5 +31,5 @@ export function handleApiError(error: unknown): NextResponse {
 }
 
 export function successResponse<T>(data: T, status = 200): NextResponse {
-  return NextResponse.json({ success: true, data }, { status })
+  return NextResponse.json({ success: true, data: data ?? ({} as T) }, { status })
 }

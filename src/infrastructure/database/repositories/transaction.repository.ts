@@ -56,15 +56,26 @@ export class TransactionRepository implements ITransactionRepository {
       const total = countResult?.count || 0
 
       const records = await this.db
-        .select()
+        .select({
+          transaction: transactions,
+          categoryName: categories.name,
+          categoryColor: categories.color,
+          categoryIcon: categories.icon,
+        })
         .from(transactions)
+        .leftJoin(categories, eq(transactions.categoryId, categories.id))
         .where(whereClause)
         .orderBy(desc(transactions.date), desc(transactions.createdAt))
         .limit(limit)
         .offset(offset)
 
       return {
-        data: records.map(this.mapToEntity),
+        data: records.map(r => ({
+          ...this.mapToEntity(r.transaction),
+          categoryName: r.categoryName || 'Sem Categoria',
+          categoryColor: r.categoryColor || '#CCCCCC',
+          categoryIcon: r.categoryIcon || 'help-circle',
+        })),
         total,
         page,
         limit,
@@ -279,6 +290,17 @@ export class TransactionRepository implements ITransactionRepository {
       }))
     } catch (error) {
       throw new DatabaseError(`Failed to get history by category: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  async deleteAll(): Promise<void> {
+    try {
+      await this.db
+        .update(transactions)
+        .set({ deletedAt: new Date(), updatedAt: new Date() })
+        .where(isNull(transactions.deletedAt))
+    } catch (error) {
+      throw new DatabaseError(`Failed to delete all transactions: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 

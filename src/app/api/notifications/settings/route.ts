@@ -1,40 +1,37 @@
-import { NextResponse } from 'next/server'
-import { z } from 'zod'
+import { notificationSettingsSchema } from '@/shared/schemas/settings.schema'
+import { handleApiError, successResponse } from '@/infrastructure/errors/handler'
 import fs from 'fs'
 import path from 'path'
 
 const settingsPath = path.join(process.cwd(), 'data', 'notification-settings.json')
 
-const notificationSettingsSchema = z.object({
-  email: z.string().email('Email inválido'),
-  enabled: z.boolean().default(true),
-  preferences: z.object({
-    budgetAlerts: z.boolean().default(true),
-    weeklySummary: z.boolean().default(true),
-    monthlySummary: z.boolean().default(true),
-    recurringReminders: z.boolean().default(true)
-  })
-})
-
 export async function GET() {
   try {
     if (!fs.existsSync(settingsPath)) {
-      return NextResponse.json({
+      return successResponse({
         email: process.env.RESEND_FROM_EMAIL || '',
-        enabled: true,
-        preferences: {
-          budgetAlerts: true,
-          weeklySummary: true,
-          monthlySummary: true,
-          recurringReminders: true
-        }
+        budgetExceeded: true,
+        recurringReminder: true,
+        weeklySummary: true,
+        monthlySummary: true,
       })
     }
 
     const data = fs.readFileSync(settingsPath, 'utf-8')
-    return NextResponse.json(JSON.parse(data))
-  } catch {
-    return NextResponse.json({ error: 'Erro ao ler configurações' }, { status: 500 })
+    const saved = JSON.parse(data)
+    
+    // Mapear de estrutura antiga (aninhada) para nova (flat) se necessário
+    const flatData = {
+      email: saved.email || '',
+      budgetExceeded: saved.preferences?.budgetAlerts ?? saved.budgetExceeded ?? true,
+      recurringReminder: saved.preferences?.recurringReminders ?? saved.recurringReminder ?? true,
+      weeklySummary: saved.preferences?.weeklySummary ?? saved.weeklySummary ?? true,
+      monthlySummary: saved.preferences?.monthlySummary ?? saved.monthlySummary ?? true,
+    }
+
+    return successResponse(flatData)
+  } catch (error) {
+    return handleApiError(error)
   }
 }
 
@@ -49,11 +46,8 @@ export async function POST(request: Request) {
     }
 
     fs.writeFileSync(settingsPath, JSON.stringify(validated, null, 2))
-    return NextResponse.json({ success: true, data: validated })
+    return successResponse(validated)
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues }, { status: 400 })
-    }
-    return NextResponse.json({ error: 'Erro ao salvar configurações' }, { status: 500 })
+    return handleApiError(error)
   }
 }

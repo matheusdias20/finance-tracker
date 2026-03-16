@@ -5,4 +5,5 @@ export interface IBudgetRepository {
   findByCategoryAndMonth(categoryId: string, month: string): Promise<BudgetWithSpent | null>
   create(input: CreateBudgetInput): Promise<Budget>
   update(id: string, limitAmount: number): Promise<Budget>
+  deleteAll(): Promise<void>
 }

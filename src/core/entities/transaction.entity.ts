@@ -50,8 +50,14 @@ export interface TransactionFilters {
   limit?: number
 }
 
+export interface TransactionWithCategory extends Transaction {
+  categoryName: string
+  categoryColor: string
+  categoryIcon: string
+}
+
 export interface PaginatedTransactions {
-  data: Transaction[]
+  data: TransactionWithCategory[]
   total: number
   page: number
   limit: number

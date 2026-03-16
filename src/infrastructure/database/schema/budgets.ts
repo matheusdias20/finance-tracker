@@ -14,6 +14,8 @@ export const budgets = pgTable(
     month: date('month').notNull(),
     limitAmount: numeric('limit_amount', { precision: 12, scale: 2 }).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
+    deletedAt: timestamp('deleted_at', { withTimezone: true }),
   },
   (table) => ({
     categoryMonthUnique: unique('budgets_category_month_unique').on(table.categoryId, table.month),

@@ -23,6 +23,7 @@ export const mockTransactionRepo = (): ITransactionRepository => ({
   sumByCategory: vi.fn(),
   sumByMonth: vi.fn(),
   getHistoryByCategory: vi.fn(),
+  deleteAll: vi.fn(),
 })
 
 export const mockBudgetRepo = (): IBudgetRepository => ({
@@ -30,4 +31,5 @@ export const mockBudgetRepo = (): IBudgetRepository => ({
   findByCategoryAndMonth: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
+  deleteAll: vi.fn(),
 })

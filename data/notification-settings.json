@@ -1,10 +1,7 @@
 {
-  "email": "valid@email.com",
-  "enabled": true,
-  "preferences": {
-    "budgetAlerts": true,
-    "weeklySummary": true,
-    "monthlySummary": true,
-    "recurringReminders": true
-  }
+  "email": "test@example.com",
+  "budgetExceeded": true,
+  "recurringReminder": true,
+  "weeklySummary": true,
+  "monthlySummary": true
 }

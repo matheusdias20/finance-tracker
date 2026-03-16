@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     const report = await getCachedEvolution(months)
     return successResponse(report)
-  } catch (error) {
+  } catch (error: unknown) {
     return handleApiError(error)
   }
 }

@@ -18,4 +18,5 @@ export interface ITransactionRepository {
   sumByCategory(month: string): Promise<CategoryReport[]>
   sumByMonth(months: number): Promise<MonthlyEvolution[]>
   getHistoryByCategory(categoryId: string, months: number): Promise<Array<{ month: string; amount: number }>>
+  deleteAll(): Promise<void>
 }

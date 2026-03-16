@@ -1,13 +1,18 @@
-import { NextResponse } from 'next/server'
 import { notificationService } from '@/infrastructure/di/container'
+import { handleApiError, successResponse } from '@/infrastructure/errors/handler'
+import { ValidationError } from '@/infrastructure/errors'
 
 export async function POST(request: Request) {
   try {
     const { type } = await request.json()
 
+    if (!notificationService) {
+      throw new Error('NotificationService not initialized')
+    }
+
     switch (type) {
       case 'budget_exceeded':
-        // Teste com ID genérico
+        // Tentar enviar para qualquer categoria existente se houver, senão usar dummy
         await notificationService.checkBudgetExceeded('test-cat', '2024-12')
         break
       case 'recurring_reminder':
@@ -17,15 +22,17 @@ export async function POST(request: Request) {
         await notificationService.sendWeeklySummary()
         break
       case 'monthly_summary':
-        await notificationService.sendMonthlySummary('2024-11')
+        const currentMonth = new Date().toISOString().substring(0, 7)
+        await notificationService.sendMonthlySummary(currentMonth)
         break
       default:
-        return NextResponse.json({ error: 'Tipo de teste inválido' }, { status: 400 })
+        throw new ValidationError('Tipo de teste inválido')
     }
 
-    return NextResponse.json({ success: true, message: `Email de teste (${type}) disparado!` })
+    return successResponse({ 
+      message: `Teste de "${type}" disparado! Verifique os logs do servidor para detalhes de entrega.` 
+    })
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Erro desconhecido'
-    return NextResponse.json({ success: false, error: message }, { status: 500 })
+    return handleApiError(error)
   }
 }

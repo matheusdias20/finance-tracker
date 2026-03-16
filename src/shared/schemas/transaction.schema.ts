@@ -18,8 +18,11 @@ export const baseTransactionSchema = z.object({
     .transform((s) => s.replace(/<[^>]*>/g, '').trim()),
   date: z
     .string({ message: 'Data é obrigatória' })
-    .regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato inválido. Use YYYY-MM-DD')
-    .transform((s) => new Date(s + 'T12:00:00.000Z')), // meio-dia UTC evita problema de timezone
+    .regex(/^\d{4}-\d{2}-\d{2}(T.*Z)?$/, 'Formato inválido. Use YYYY-MM-DD')
+    .transform((s) => {
+      if (s.includes('T')) return new Date(s)
+      return new Date(s + 'T12:00:00.000Z')
+    }), // meio-dia UTC evita problema de timezone
   type: z.enum(['income', 'expense'], {
     message: 'Tipo é obrigatório ou inválido',
   }),

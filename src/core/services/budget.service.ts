@@ -40,4 +40,8 @@ export class BudgetService {
     // Futuramente, notificar o NotificationService ou Repository se necessário
     return { exceeded: isExceeded, percentageUsed, budget }
   }
+
+  async deleteAll(): Promise<void> {
+    await this.budgetRepo.deleteAll()
+  }
 }

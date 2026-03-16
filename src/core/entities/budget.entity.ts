@@ -4,6 +4,8 @@ export interface Budget {
   month: Date
   limitAmount: number
   createdAt: Date
+  updatedAt: Date
+  deletedAt: Date | null
 }
 
 export interface BudgetWithSpent extends Budget {
