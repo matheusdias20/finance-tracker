@@ -20,6 +20,7 @@ export default defineConfig({
         'src/core/services/**/*.ts',
         'src/infrastructure/database/repositories/**/*.ts',
         'src/app/api/**/*.ts',
+        'src/presentation/components/**/*.tsx',
       ],
       exclude: [
         'src/**/*.d.ts',

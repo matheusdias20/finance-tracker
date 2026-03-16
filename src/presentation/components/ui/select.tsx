@@ -22,14 +22,20 @@ export function Select({
   label, value, onChange, options,
   placeholder = 'Selecione...', error, disabled, className
 }: SelectProps) {
+  const selectId = `select-${label?.toLowerCase().replace(/\s+/g, '-')}`
+
   return (
     <div className={cn('flex flex-col gap-1.5 w-full', className)}>
       {label && (
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label 
+          htmlFor={selectId}
+          className="text-sm font-medium text-gray-700 dark:text-gray-300"
+        >
           {label}
         </label>
       )}
       <select
+        id={selectId}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
