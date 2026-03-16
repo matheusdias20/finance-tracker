@@ -57,7 +57,7 @@ describe('Reports API Integration', () => {
       const data = await response.json()
       
       expect(response.status).toBe(200)
-      expect(data.data[0].name).toBe('Comida')
+      expect(data.data[0].categoryName).toBe('Comida')
     })
     
     it('fallback para categoria desconhecida', async () => {
@@ -67,7 +67,7 @@ describe('Reports API Integration', () => {
       const request = new NextRequest('http://localhost/api/reports/by-category?month=2024-12')
       const response = await GET_CATEGORY(request)
       const data = await response.json()
-      expect(data.data[0].name).toBe('Desconhecida')
+      expect(data.data[0].categoryName).toBe('Desconhecida')
     })
 
     it('retorna 500 em erro do serviço', async () => {

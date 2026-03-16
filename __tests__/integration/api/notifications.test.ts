@@ -23,17 +23,17 @@ describe('Notifications Settings API Integration', () => {
       vi.mocked(fs.existsSync).mockReturnValue(false)
       const response = await GET()
       const data = await response.json()
-      expect(data).toHaveProperty('enabled', true)
+      expect(data.data).toHaveProperty('budgetExceeded', true)
       expect(response.status).toBe(200)
     })
 
     it('retorna dados do arquivo se existir', async () => {
       vi.mocked(fs.existsSync).mockReturnValue(true)
-      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ email: 'test@test.com', enabled: false }))
+      vi.mocked(fs.readFileSync).mockReturnValue(JSON.stringify({ email: 'test@test.com', budgetExceeded: false }))
       const response = await GET()
       const data = await response.json()
-      expect(data.email).toBe('test@test.com')
-      expect(data.enabled).toBe(false)
+      expect(data.data.email).toBe('test@test.com')
+      expect(data.data.budgetExceeded).toBe(false)
     })
 
     it('retorna 500 em erro de leitura', async () => {
@@ -49,8 +49,10 @@ describe('Notifications Settings API Integration', () => {
       vi.mocked(fs.existsSync).mockReturnValue(false) // dir missing
       const body = { 
         email: 'user@test.com', 
-        enabled: true, 
-        preferences: { budgetAlerts: true, weeklySummary: true, monthlySummary: true, recurringReminders: true } 
+        budgetExceeded: true,
+        recurringReminder: true,
+        weeklySummary: true,
+        monthlySummary: true
       }
       const request = new NextRequest('http://localhost/api/notifications/settings', { method: 'POST', body: JSON.stringify(body) })
       const response = await POST(request)
@@ -71,8 +73,10 @@ describe('Notifications Settings API Integration', () => {
       vi.mocked(fs.writeFileSync).mockImplementation(() => { throw new Error('fail') })
       const body = { 
         email: 'user@test.com', 
-        enabled: true, 
-        preferences: { budgetAlerts: true, weeklySummary: true, monthlySummary: true, recurringReminders: true } 
+        budgetExceeded: true,
+        recurringReminder: true,
+        weeklySummary: true,
+        monthlySummary: true
       }
       const request = new NextRequest('http://localhost/api/notifications/settings', { method: 'POST', body: JSON.stringify(body) })
       const response = await POST(request)

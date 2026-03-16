@@ -21,6 +21,7 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
       update: vi.fn().mockReturnThis(),
       set: vi.fn().mockReturnThis(),
       innerJoin: vi.fn().mockReturnThis(),
+      leftJoin: vi.fn().mockReturnThis(),
       groupBy: vi.fn().mockReturnThis(),
       asc: vi.fn().mockReturnThis(),
       desc: vi.fn().mockReturnThis(),
@@ -32,7 +33,14 @@ describe('TransactionRepository Unit Tests (Exhaustive)', () => {
   describe('findMany', () => {
     it('sucesso com todos os filtros', async () => {
       mockDb.where.mockResolvedValueOnce([{ count: 100 }])
-      mockDb.offset.mockResolvedValueOnce([{ id: '1', amount: '100', description: 'd', date: '2024-12-01', type: 'expense', categoryId: 'c1' }])
+      mockDb.offset.mockResolvedValueOnce([
+        { 
+          transaction: { id: '1', amount: '100', description: 'd', date: '2024-12-01', type: 'expense', categoryId: 'c1' },
+          categoryName: 'Cat 1',
+          categoryColor: '#000',
+          categoryIcon: 'icon'
+        }
+      ])
       
       const res = await repo.findMany({ 
         month: '2024-12', 
