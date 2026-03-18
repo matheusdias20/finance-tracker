@@ -38,13 +38,13 @@ export class BudgetRepository implements IBudgetRepository {
           and(
             eq(transactions.categoryId, budgets.categoryId),
             eq(transactions.type, 'expense'),
-            sql`DATE_TRUNC('month', ${transactions.date}::date) = ${budgets.month}::date`,
+            sql`DATE_TRUNC('month', ${transactions.date}) = DATE_TRUNC('month', ${budgets.month})`,
             isNull(transactions.deletedAt)
           )
         )
         .where(
           and(
-            eq(sql`DATE_TRUNC('month', ${budgets.month}::date)`, sql`DATE_TRUNC('month', ${month}::date)`),
+            sql`TO_CHAR(${budgets.month}, 'YYYY-MM') = ${month}`,
             isNull(budgets.deletedAt)
           )
         )
@@ -84,7 +84,7 @@ export class BudgetRepository implements IBudgetRepository {
         .where(
           and(
             eq(budgets.categoryId, categoryId),
-            sql`TO_CHAR(${budgets.month}::date, 'YYYY-MM') = ${monthPrefix}`,
+            sql`TO_CHAR(${budgets.month}, 'YYYY-MM') = ${monthPrefix}`,
             isNull(budgets.deletedAt)
           )
         )
