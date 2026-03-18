@@ -1,10 +1,87 @@
 'use client'
 
 import React, { useMemo } from 'react'
-import * as LucideIcons from 'lucide-react'
+import { 
+  LayoutDashboard, 
+  ArrowUpRight, 
+  ArrowDownRight, 
+  Wallet, 
+  PieChart, 
+  Settings, 
+  TrendingUp,
+  HelpCircle,
+  Plus,
+  Trash2,
+  Edit2,
+  Search,
+  Filter,
+  Download,
+  Bell,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  User,
+  Menu,
+  X,
+  PlusCircle,
+  MinusCircle,
+  Hash,
+  ShoppingBag,
+  CreditCard,
+  Utensils,
+  Coffee,
+  Car,
+  Home,
+  Heart,
+  Gamepad2,
+  Briefcase,
+  GraduationCap
+} from 'lucide-react'
 
 import { cn } from '@/presentation/lib/utils'
 
+const ICONS_MAP = {
+  LayoutDashboard,
+  ArrowUpRight,
+  ArrowDownRight,
+  Wallet,
+  PieChart,
+  Settings,
+  TrendingUp,
+  HelpCircle,
+  Plus,
+  Trash2,
+  Edit2,
+  Search,
+  Filter,
+  Download,
+  Bell,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+  ChevronLeft,
+  ChevronRight,
+  LogOut,
+  User,
+  Menu,
+  X,
+  PlusCircle,
+  MinusCircle,
+  Hash,
+  ShoppingBag,
+  CreditCard,
+  Utensils,
+  Coffee,
+  Car,
+  Home,
+  Heart,
+  Gamepad2,
+  Briefcase,
+  GraduationCap
+}
 
 interface LucideIconProps extends Omit<React.SVGProps<SVGSVGElement>, 'ref'> {
   name: string
@@ -26,15 +103,12 @@ export function LucideIcon({
   ...props
 }: LucideIconProps) {
   const IconComponent = useMemo(() => {
-    // Convert kebab-case or PascalCase string to what lucide-react exports
-    // e.g., 'layout-dashboard' -> 'LayoutDashboard'
     const pascalName = name
       .split('-')
       .map(part => part.charAt(0).toUpperCase() + part.slice(1))
       .join('')
 
-    const Icons = LucideIcons as unknown as Record<string, React.ComponentType<{ size?: number | string | undefined; color?: string | undefined; strokeWidth?: number | string | undefined; className?: string | undefined } >>
-    const Icon = Icons[pascalName] || Icons[name] || LucideIcons.HelpCircle
+    const Icon = (ICONS_MAP as Record<string, React.ElementType>)[pascalName] || (ICONS_MAP as Record<string, React.ElementType>)[name] || HelpCircle
     return Icon
   }, [name])
 

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { NotificationSettings } from '@/shared/schemas/settings.schema'
+import type { NotificationSettings } from '@/shared/schemas/settings.schema'
 import { NotificationForm } from './notification-form'
 import { TestingSection } from './testing-section'
 import { DataSection } from './data-section'

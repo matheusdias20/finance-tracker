@@ -1,7 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import * as Icons from 'lucide-react'
+import { 
+  Utensils, Coffee, Pizza, ShoppingCart, 
+  Car, Bike, Bus, Plane, 
+  Home, Sofa, Lightbulb, Wrench, 
+  Heart, Activity, Pill, Stethoscope, 
+  Gamepad2, Music, Film, TreePine, 
+  TrendingUp, TrendingDown, Wallet, CreditCard, 
+  GraduationCap, BookOpen, Pencil, Monitor, 
+  Repeat, Star, Zap, Package, 
+  Search
+} from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/presentation/lib/utils'
 import { Input } from '@/presentation/components/ui/input'
@@ -10,6 +20,18 @@ interface IconPickerProps {
   value: string
   onChange: (value: string) => void
   className?: string
+}
+
+const ICON_MAP = {
+  Utensils, Coffee, Pizza, ShoppingCart, 
+  Car, Bike, Bus, Plane, 
+  Home, Sofa, Lightbulb, Wrench, 
+  Heart, Activity, Pill, Stethoscope, 
+  Gamepad2, Music, Film, TreePine, 
+  TrendingUp, TrendingDown, Wallet, CreditCard, 
+  GraduationCap, BookOpen, Pencil, Monitor, 
+  Repeat, Star, Zap, Package, 
+  Search
 }
 
 const FINANCE_ICONS = [
@@ -71,13 +93,12 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
         placeholder="Pesquisar ícone..."
         value={search}
         onChange={setSearch}
-        icon={<Icons.Search className="h-4 w-4" />}
+        icon={<Search className="h-4 w-4" />}
       />
 
       <div className="grid grid-cols-8 gap-2 max-h-[240px] overflow-y-auto p-1">
         {filteredIcons.map((item) => {
-          const IconName = item.name as keyof typeof Icons
-          const Icon = Icons[IconName] as LucideIcon
+          const Icon = ICON_MAP[item.name as keyof typeof ICON_MAP] as LucideIcon
           const isSelected = value === item.name
 
           return (

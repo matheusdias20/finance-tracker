@@ -1,11 +1,19 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { MonthlyBarChart } from '@/presentation/components/reports/monthly-bar-chart'
-import { BalanceAreaChart } from '@/presentation/components/reports/balance-area-chart'
+import dynamic from 'next/dynamic'
 import { ForecastTable } from '@/presentation/components/reports/forecast-table'
 import { CategorySummary } from '@/presentation/components/reports/category-summary'
 import { cn } from '@/presentation/lib/utils'
+
+const MonthlyBarChart = dynamic(
+  () => import('@/presentation/components/reports/monthly-bar-chart').then(mod => mod.MonthlyBarChart),
+  { ssr: false }
+)
+const BalanceAreaChart = dynamic(
+  () => import('@/presentation/components/reports/balance-area-chart').then(mod => mod.BalanceAreaChart),
+  { ssr: false }
+)
 
 interface EvolutionData {
   month: string
