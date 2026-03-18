@@ -70,8 +70,8 @@ export function MetricCard({
         {formattedValue}
       </p>
 
-      {/* Trend */}
-      {trend !== null && (
+      {/* Trend & Label */}
+      {(trend !== null || trendLabel) && (
         <div className="flex items-center gap-1 text-xs font-medium">
           {trendPositive && (
             <>

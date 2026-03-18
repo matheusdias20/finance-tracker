@@ -16,3 +16,7 @@ vi.mock('next/cache', () => ({
 }))
 
 vi.setSystemTime(new Date('2024-12-01T10:00:00.000Z'))
+
+// Silenciar erros esperados durante testes de integração (cenários de erro 500)
+vi.spyOn(console, 'error').mockImplementation(() => {})
+vi.spyOn(console, 'warn').mockImplementation(() => {})

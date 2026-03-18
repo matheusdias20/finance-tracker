@@ -4,7 +4,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import { addMonths, subMonths, format, parse } from 'date-fns'
 import { useAppState } from '@/presentation/providers'
-import { Button, PageHeader } from '@/presentation/components/ui'
+import { Button } from '@/presentation/components/ui/button'
+import { PageHeader } from '@/presentation/components/layout/page-header'
 import { MonthNavigator } from '@/presentation/components/layout/month-navigator'
 
 export function DashboardHeader() {
